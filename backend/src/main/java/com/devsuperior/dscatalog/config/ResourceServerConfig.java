@@ -59,13 +59,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		http.cors().configurationSource(corsConfigurationSource());
 	}
 
+	//origens permitidas
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 
 		String[] origins = corsOrigins.split(",");
 
 		CorsConfiguration corsConfig = new CorsConfiguration();
-		corsConfig.setAllowedOriginPatterns(Arrays.asList(origins));
+		corsConfig.setAllowedOriginPatterns(Arrays.asList(origins)); //liberar o frontend futuro aqui aula 05-32
 		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
 		corsConfig.setAllowCredentials(true);
 		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
