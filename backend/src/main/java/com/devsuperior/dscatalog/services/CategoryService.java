@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class CategoryService {
 		return new CategoryDTO(entity);
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@Transactional
 	public CategoryDTO insert(CategoryDTO dto) {
 		Category entity = new Category();
@@ -45,6 +47,7 @@ public class CategoryService {
 		return new CategoryDTO(entity);
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@Transactional
 	public CategoryDTO update(Long id, CategoryDTO dto) {
 		try {
@@ -58,6 +61,7 @@ public class CategoryService {
 		}		
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public void delete(Long id) {
 		try {
 			repository.deleteById(id);

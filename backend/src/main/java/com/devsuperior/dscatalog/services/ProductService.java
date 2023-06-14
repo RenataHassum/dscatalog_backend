@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +48,7 @@ public class ProductService {
 		return new ProductDTO(entity, entity.getCategories());
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@Transactional
 	public ProductDTO insert(ProductDTO dto) {
 		Product entity = new Product();
@@ -55,6 +57,7 @@ public class ProductService {
 		return new ProductDTO(entity);
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@Transactional
 	public ProductDTO update(Long id, ProductDTO dto) {
 		try {
@@ -68,6 +71,7 @@ public class ProductService {
 		}		
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public void delete(Long id) {
 		try {
 			repository.deleteById(id);

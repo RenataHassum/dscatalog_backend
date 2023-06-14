@@ -52,15 +52,6 @@ public class UserService implements UserDetailsService {
         return list.map(x -> new UserDTO(x));
     }
 
-//    @PreAuthorize("hasAnyRole('ROLE_OPERATOR', 'ROLE_ADMIN')")
-//    @Transactional(readOnly = true)
-//    public UserDTO findById(Long id) {
-//        authService.validateSelfOrAdmin(id);
-//        Optional<User> obj = repository.findById(id);
-//        User entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
-//        return new UserDTO(entity);
-//    }
-
     @PreAuthorize("hasAnyRole('ROLE_OPERATOR', 'ROLE_ADMIN')")
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
@@ -69,15 +60,12 @@ public class UserService implements UserDetailsService {
             Optional<User> obj = repository.findById(id);
             User entity = obj.get();
             return new UserDTO(entity);
-        }
-
-        catch (EntityNotFoundException | NullPointerException e) {
+        } catch (EntityNotFoundException | NullPointerException e) {
             throw new ResourceNotFoundException("Id not found " + id);
         }
 
     }
 
-    
     @Transactional
     public UserDTO insert(UserInsertDTO dto) {
         User entity = new User();
