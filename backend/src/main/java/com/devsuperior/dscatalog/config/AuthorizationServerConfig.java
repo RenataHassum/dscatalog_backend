@@ -1,4 +1,5 @@
 package com.devsuperior.dscatalog.config;
+
 import com.devsuperior.dscatalog.components.JwtTokenEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +47,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	private JwtTokenEnhancer tokenEnhancer;
 
 	@Autowired
-	UserDetailsService userDetailsService;
+	private UserDetailsService userDetailsService;
 
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
