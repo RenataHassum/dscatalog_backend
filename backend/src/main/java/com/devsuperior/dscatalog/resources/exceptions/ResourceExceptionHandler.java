@@ -1,11 +1,11 @@
-package com.devsuperior.dscatalog.resources;
+package com.devsuperior.dscatalog.resources.exceptions;
 
 import java.time.Instant;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.devsuperior.dscatalog.services.DatabaseException;
-import com.devsuperior.dscatalog.services.ResourceNotFoundException;
+import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
+import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
