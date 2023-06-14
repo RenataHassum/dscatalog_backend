@@ -14,28 +14,28 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+	@Value("${jwt.secret}")
+	private String jwtSecret;
 
-    @Bean
-    BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	BCryptPasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Bean
-    JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter tokenConverter = new JwtAccessTokenConverter();
-        tokenConverter.setSigningKey(jwtSecret);
-        return tokenConverter;
-    }
+	@Bean
+	JwtAccessTokenConverter accessTokenConverter() {
+		JwtAccessTokenConverter tokenConverter = new JwtAccessTokenConverter();
+		tokenConverter.setSigningKey(jwtSecret);
+		return tokenConverter;
+	}
 
-    @Bean
-    JwtTokenStore tokenStore() {
-        return new JwtTokenStore(accessTokenConverter());
-    }
+	@Bean
+	JwtTokenStore tokenStore() {
+		return new JwtTokenStore(accessTokenConverter());
+	}
 
-    @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+	@Bean
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
 }

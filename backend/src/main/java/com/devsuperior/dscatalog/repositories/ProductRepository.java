@@ -9,4 +9,3 @@ import com.devsuperior.dscatalog.entities.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
 }
-
