@@ -1,5 +1,4 @@
 package com.devsuperior.dscatalog.config;
-import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,72 +18,70 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-	@Value("${cors.origins}")
-	private String corsOrigins;
+    @Value("${cors.origins}")
+    private String corsOrigins;
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 
-	@Autowired
-	private JwtTokenStore tokenStore;
+    @Autowired
+    private JwtTokenStore tokenStore;
 
-	private static final String[] PUBLIC = {"/oauth/token", "/h2-console/**"};
-	private static final String[] OPERATOR_OR_ADMIN = {"/products/**", "/categories/**"};// aula 03-26
-	private static final String[] OPERATOR_OR_ADMIN_USERS = {"/users/**"};
-	private static final String[] ADMIN = {"/users/**"};
+    private static final String[] PUBLIC = {"/oauth/token", "/h2-console/**"};
+    private static final String[] OPERATOR_OR_ADMIN = {"/products/**", "/categories/**"};// aula 03-26
+    private static final String[] OPERATOR_OR_ADMIN_USERS = {"/users/**"};
 
-	@Override
-	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-		resources.tokenStore(tokenStore);
-	}
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        resources.tokenStore(tokenStore);
+    }
 
-	@Override
-	public void configure(HttpSecurity http) throws Exception {
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
 
-		// H2 frames lesson 03-27
-		if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
-			http.headers().frameOptions().disable();
-		}
+        // H2 frames lesson 03-27
+        if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
+            http.headers().frameOptions().disable();
+        }
 
-		http.authorizeRequests()
-				.antMatchers(PUBLIC).permitAll()
-				.antMatchers(HttpMethod.GET, OPERATOR_OR_ADMIN_USERS).hasAnyRole("OPERATOR", "ADMIN")
-				.antMatchers(HttpMethod.POST, OPERATOR_OR_ADMIN_USERS).permitAll()
-				.antMatchers(HttpMethod.PUT, OPERATOR_OR_ADMIN_USERS).permitAll()
-				.antMatchers(HttpMethod.DELETE, OPERATOR_OR_ADMIN_USERS).permitAll()
-				.antMatchers(OPERATOR_OR_ADMIN).hasAnyRole("OPERATOR", "ADMIN")
-				.antMatchers(ADMIN).hasRole("ADMIN")
-				.anyRequest().authenticated();
+        http.authorizeRequests()
+                .antMatchers(PUBLIC).permitAll()
+                .antMatchers(HttpMethod.GET, OPERATOR_OR_ADMIN).permitAll()
+                .antMatchers(OPERATOR_OR_ADMIN).hasAnyRole("OPERATOR", "ADMIN")
+                .antMatchers(OPERATOR_OR_ADMIN_USERS).hasAnyRole("OPERATOR", "ADMIN")
+                .anyRequest().authenticated();
 
-		http.cors().configurationSource(corsConfigurationSource());
-	}
+        http.cors().configurationSource(corsConfigurationSource());
+    }
 
-	//origens permitidas
-	@Bean
-	CorsConfigurationSource corsConfigurationSource() {
+    //origens permitidas
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
 
-		String[] origins = corsOrigins.split(",");
+        String[] origins = corsOrigins.split(",");
 
-		CorsConfiguration corsConfig = new CorsConfiguration();
-		corsConfig.setAllowedOriginPatterns(Arrays.asList(origins)); //liberar o frontend futuro aqui aula 05-32
-		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
-		corsConfig.setAllowCredentials(true);
-		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOriginPatterns(Arrays.asList(origins)); //liberar o frontend futuro aqui aula 05-32
+        corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
+        corsConfig.setAllowCredentials(true);
+        corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", corsConfig);
-		return source;
-	}
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+        return source;
+    }
 
-	@Bean
-	FilterRegistrationBean<CorsFilter> corsFilter() {
-		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
-		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-		return bean;
-	}
+    @Bean
+    FilterRegistrationBean<CorsFilter> corsFilter() {
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
 }
 

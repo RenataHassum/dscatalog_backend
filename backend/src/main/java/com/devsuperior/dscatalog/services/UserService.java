@@ -52,15 +52,32 @@ public class UserService implements UserDetailsService {
         return list.map(x -> new UserDTO(x));
     }
 
+//    @PreAuthorize("hasAnyRole('ROLE_OPERATOR', 'ROLE_ADMIN')")
+//    @Transactional(readOnly = true)
+//    public UserDTO findById(Long id) {
+//        authService.validateSelfOrAdmin(id);
+//        Optional<User> obj = repository.findById(id);
+//        User entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
+//        return new UserDTO(entity);
+//    }
+
     @PreAuthorize("hasAnyRole('ROLE_OPERATOR', 'ROLE_ADMIN')")
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
-        authService.validateSelfOrAdmin(id);
-        Optional<User> obj = repository.findById(id);
-        User entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
-        return new UserDTO(entity);
+        try {
+            authService.validateSelfOrAdmin(id);
+            Optional<User> obj = repository.findById(id);
+            User entity = obj.get();
+            return new UserDTO(entity);
+        }
+
+        catch (EntityNotFoundException | NullPointerException e) {
+            throw new ResourceNotFoundException("Id not found " + id);
+        }
+
     }
 
+    
     @Transactional
     public UserDTO insert(UserInsertDTO dto) {
         User entity = new User();
@@ -87,7 +104,7 @@ public class UserService implements UserDetailsService {
 
             entity = repository.save(entity);
             return new UserDTO(entity);
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException | NullPointerException e) {
             throw new ResourceNotFoundException("Id not found " + id);
         }
     }
@@ -97,7 +114,8 @@ public class UserService implements UserDetailsService {
         try {
             authService.validateSelfOrAdmin(id);
             repository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
+
+        } catch (EmptyResultDataAccessException | NullPointerException e) {
             throw new ResourceNotFoundException("Id not found " + id);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Integrity violation");
