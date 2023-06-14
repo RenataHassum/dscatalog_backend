@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,19 @@ public class ProductService {
         copyDtoToEntity(dto, entity);
         entity = repository.save(entity);
         return new ProductDTO(entity);
+    }
+
+    @Transactional
+    public ProductDTO update(Long id, ProductDTO dto) {
+        try {
+            Product entity = repository.getOne(id);
+            copyDtoToEntity(dto, entity);
+            entity = repository.save(entity);
+            return new ProductDTO(entity);
+        }
+        catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Id not found " + id);
+        }
     }
 
     private void copyDtoToEntity(ProductDTO dto, Product entity) {
