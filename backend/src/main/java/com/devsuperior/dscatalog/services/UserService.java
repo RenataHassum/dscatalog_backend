@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -60,7 +61,7 @@ public class UserService implements UserDetailsService {
             Optional<User> obj = repository.findById(id);
             User entity = obj.get();
             return new UserDTO(entity);
-        } catch (EntityNotFoundException | NullPointerException e) {
+        } catch (EntityNotFoundException | NoSuchElementException | NullPointerException e) {
             throw new ResourceNotFoundException("Id not found " + id);
         }
 
